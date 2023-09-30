@@ -1,0 +1,17 @@
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.csproj.AssemblyReference.cache
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.AssemblyInfoInputs.cache
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.AssemblyInfo.cs
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.csproj.CoreCompileInputs.cache
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Lab2.exe
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Lab2.deps.json
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Lab2.runtimeconfig.json
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Lab2.dll
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Lab2.pdb
+C:\Users\Silvi\source\repos\Cloud23\Lab2\bin\Release\net7.0\Newtonsoft.Json.dll
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.csproj.CopyComplete
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.dll
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\refint\Lab2.dll
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.pdb
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\Lab2.genruntimeconfig.cache
+C:\Users\Silvi\source\repos\Cloud23\Lab2\obj\Release\net7.0\ref\Lab2.dll
