@@ -8,28 +8,27 @@ using System.Text;
 
 namespace Lab2.Views
 {
-    internal class AuthFlow
+    internal static class AuthFlow
     {
-        private readonly CustomerServices _customerServices;
-        private readonly Notification _notification;
-     
-        private readonly Dictionary<string, int> _mainPosition;
+        private static readonly Dictionary<string, int> MainPosition;
+        private static readonly int NotificationDuration = 4000;
         
 
-        public AuthFlow(CustomerServices customerServices, Notification notification)
+        static AuthFlow()
         {
-            _customerServices = customerServices;
-            _notification = notification;
-           
-
-            _mainPosition = new Dictionary<string, int>
+            MainPosition = new Dictionary<string, int>
             {
                 { "left", Console.WindowWidth /2},
-                { "top", (Console.WindowHeight  / 2) - (Console.WindowHeight / 3) }
+                { "top", (Console.WindowHeight  / 3)  }
             };
         }
+        private static void UpdateMainPosition()
+        {
+            MainPosition["left"] = Console.WindowWidth / 2;
+            MainPosition["top"] = (Console.WindowHeight / 3);
+        }
 
-        public void Render()
+        public static void Render()
         {
             int currentSelection = 0;
             ConsoleKey key;
@@ -54,7 +53,7 @@ namespace Lab2.Views
                         if (currentSelection == 0)
                         {
                             Login();
-                            if (GlobalState.LoggedInCustomer != null) // If a customer was successfully logged in
+                            if (GlobalState.LoggedInCustomer != null)
                             {
                                 shouldExit = true;
                             }
@@ -62,26 +61,26 @@ namespace Lab2.Views
                         else if (currentSelection == 1)
                         {
                             Register();
-                            if (GlobalState.LoggedInCustomer != null) // If a customer was successfully registered
+                            if (GlobalState.LoggedInCustomer != null) 
                             {
                                 shouldExit = true;
                             }
                         }
                         break;
                 }
-            } while (!shouldExit); // Exit the loop if shouldExit is true or if ESC is pressed
+            } while (!shouldExit); 
         }
 
-        private void Login()
+        private static void Login()
         {
-            GlobalState.LoggedInCustomer = null;
+            GlobalState.LoggedInCustomer = null; 
             var CustomerName = GetInput("Enter your username:", "Name can't be empty", 1);
             if (CustomerName == null) return;
 
             var password = GetInput("Enter your password:", "Password can't be empty", 4);
             if (password == null) return;
 
-            var (LoggedInCustomerName, status) = _customerServices.Login(CustomerName, password);
+           Enum status = CustomerServices.Login(CustomerName, password);
             switch (status)
             {
                 case EnumLoginStatus.Success:                   
@@ -89,71 +88,65 @@ namespace Lab2.Views
                                      
                     break;
                 case EnumLoginStatus.UserDoesNotExist:
-                    _notification.Show(CustomerName, "doesn't exist. Try again or register as a new user.", NotificationType.Error, 2000);
+                    Notification.Show(CustomerName, "doesn't exist. Try again or register as a new user.", NotificationType.Error, NotificationDuration);
                     break;
                 case EnumLoginStatus.IncorrectPassword:
-                    _notification.Show("Error", "Password is incorrect. Try again.", NotificationType.Error);
+                    Notification.Show("Error", "Password is incorrect. Try again.", NotificationType.Error);
                     break;
                 default:
-                    _notification.Show("Error", "An unexpected error occurred. Please try again later.", NotificationType.Error);
+                    Notification.Show("Error", "An unexpected error occurred. Please try again later.", NotificationType.Error);
                     break;
             }
            
         }
 
-        private void Register()
+        private static void Register()
         {
             GlobalState.LoggedInCustomer = null; 
 
-
-            var CustomerName = GetInput("Enter desired username:", "Name can't be empty", 1, 8);
-
+            var CustomerName = GetInput("Enter desired username:", "Name can't be empty", 1);
             if (CustomerName == null) return;
 
             var password = GetInput("Enter desired password:", "Password can't be empty", 4);
             if (password == null) return;
 
-            var (LoggedInCustomerName, status) = _customerServices.Register(CustomerName, password);
+            (string? LoggedInCustomerName, Enum status) = CustomerServices.Register(CustomerName, password);
             switch (status)
             {
                 case EnumRegisterStatus.Success:                   
                     Body.Clear();
-                    _notification.Show($"{LoggedInCustomerName}", $"Welcome! You have successfully registered.", NotificationType.Success, 2000, "center");                     
+                    Notification.Show($"{LoggedInCustomerName}", $"Welcome! You have successfully registered.", NotificationType.Success, NotificationDuration, "center");                     
                     break;
                 case EnumRegisterStatus.UserAlreadyExists:
-                    _notification.Show("Error", "Customer with the provided name already exists.", NotificationType.Error);
+                    Notification.Show("Error", "Customer with the provided name already exists.", NotificationType.Error);
                     break;
                 case EnumRegisterStatus.Error:
                 default:
-                    _notification.Show("Error", "An error occurred while trying to register. Please try again.", NotificationType.Error);
+                    Notification.Show("Error", "An error occurred while trying to register. Please try again.", NotificationType.Error);
                     break;
             }
         }
 
 
-        private string? GetInput(string prompt, string errorMessage, int yOffset, int charLimit = int.MaxValue)
+        private static string? GetInput(string prompt, string errorMessage, int yOffset)
         {
             while (true)
             {
                 DrawInputBorder(prompt.Length, yOffset);
 
-                Console.SetCursorPosition(_mainPosition["left"] - prompt.Length / 2, _mainPosition["top"] + yOffset + 1);
+                Console.SetCursorPosition(MainPosition["left"] - prompt.Length / 2, MainPosition["top"] + yOffset + 1);
                 Console.Write(prompt);
 
-                Console.SetCursorPosition(_mainPosition["left"] - prompt.Length / 2, _mainPosition["top"] + yOffset + 2);
+                Console.SetCursorPosition(MainPosition["left"] - prompt.Length / 2, MainPosition["top"] + yOffset + 2);
                 var input = CustomReadLine();
 
                 if (input == "ESCAPE_KEY_PRESSED")
                 {
-                    return null; // This will indicate that the escape key was pressed
+                    return null; 
                 }
                 else if (string.IsNullOrEmpty(input))
                 {
-                    _notification.Show("Error", errorMessage, NotificationType.Error, 2300);
-                }
-                else if (input.Length > charLimit)
-                {
-                    _notification.Show("Error", $"Input cannot exceed {charLimit} characters.", NotificationType.Error, 2300);
+                    Notification.Show("Error", errorMessage, NotificationType.Error, 2300);
                 }
                 else
                 {
@@ -162,26 +155,25 @@ namespace Lab2.Views
             }
         }
 
-
-
-        private void DrawInputBorder(int promptLength, int yOffset)
+        private static void DrawInputBorder(int promptLength, int yOffset)
         {
+            UpdateMainPosition();
             int width = promptLength + 10;
-            Console.SetCursorPosition(_mainPosition["left"] - width / 2, _mainPosition["top"] + yOffset);
+            Console.SetCursorPosition(MainPosition["left"] - width / 2, MainPosition["top"] + yOffset);
             Console.Write("+" + new string('-', width) + "+");
 
-            for (int i = 1; i <= 3; i++) // Increased to 3 for padding
+            for (int i = 1; i <= 3; i++) 
             {
-                Console.SetCursorPosition(_mainPosition["left"] - width / 2, _mainPosition["top"] + yOffset + i);
+                Console.SetCursorPosition(MainPosition["left"] - width / 2, MainPosition["top"] + yOffset + i);
                 Console.Write("|" + new string(' ', width) + "|");
             }
 
-            Console.SetCursorPosition(_mainPosition["left"] - width / 2, _mainPosition["top"] + yOffset + 4);
+            Console.SetCursorPosition(MainPosition["left"] - width / 2, MainPosition["top"] + yOffset + 4);
             Console.Write("+" + new string('-', width) + "+");
         }
 
 
-        private string? CustomReadLine()
+        private static string? CustomReadLine()
         {
             var input = new StringBuilder();
 
@@ -194,7 +186,7 @@ namespace Lab2.Views
                         Console.WriteLine();
                         return input.ToString();
                     case ConsoleKey.Escape:
-                        return "ESCAPE_KEY_PRESSED"; // Special value to indicate escape key was pressed
+                        return "ESCAPE_KEY_PRESSED"; 
                     case ConsoleKey.Backspace when input.Length > 0:
                         Console.Write("\b \b");
                         input.Remove(input.Length - 1, 1);
@@ -212,41 +204,47 @@ namespace Lab2.Views
         }
 
 
-        private void DisplayTitle()
-        {   string title = $"Welcome to the {GlobalState.StoreName}!";
-            Console.SetCursorPosition(_mainPosition["left"] - $"{title}".Length / 2, _mainPosition["top"] - 2);
-            Console.WriteLine($"{title}");
-            Console.SetCursorPosition(_mainPosition["left"] - $"{title}".Length / 2, _mainPosition["top"] - 1);
-            Console.WriteLine(new string('-', $"{title}".Length));
+        private static void DisplayTitle()           
+        {
+            UpdateMainPosition();
+            string title = $"Welcome to the {StoreConfig.StoreName}!";
             
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.SetCursorPosition((MainPosition["left"] - $"{title}".Length / 2)+1, MainPosition["top"] -2 );
+            Console.WriteLine($"{title}");
+            Console.ResetColor();
+            Console.SetCursorPosition((MainPosition["left"] - $"{title}".Length / 2)+1, MainPosition["top"] - 1);
+            Console.WriteLine(new string('-', $"{title}".Length));       
+                    
         }
 
-        private void DisplayOptions(int currentSelection)
+        private static void DisplayOptions(int currentSelection)
         {
+            UpdateMainPosition();
             int buttonWidth = 10; 
-            int spacingBetweenButtons = 4; // Spaces between the two buttons
+            int spacingBetweenButtons = 4; 
 
             string loginButton = CreateButton("Login", buttonWidth);
             string registerButton = CreateButton("Register", buttonWidth);
 
             int totalWidth = 2 * buttonWidth + spacingBetweenButtons;
 
-            Console.SetCursorPosition(_mainPosition["left"] - totalWidth / 2, _mainPosition["top"]);
+            Console.SetCursorPosition(MainPosition["left"] - totalWidth / 2, MainPosition["top"]);
             Console.Write(currentSelection == 0 ? HighlightOption(loginButton) : loginButton);
 
-            Console.SetCursorPosition(_mainPosition["left"] - totalWidth / 2 + buttonWidth + spacingBetweenButtons, _mainPosition["top"]);
+            Console.SetCursorPosition(MainPosition["left"] - totalWidth / 2 + buttonWidth + spacingBetweenButtons, MainPosition["top"]);
             Console.Write(currentSelection == 1 ? HighlightOption(registerButton) : registerButton);
         }
 
-        private string CreateButton(string text, int width)
+        private static string CreateButton(string text, int width)
         {
             int padding = (width - text.Length) / 2;
             return "[" + new string(' ', padding) + text + new string(' ', width - text.Length - padding) + "]";
         }
 
-        private string HighlightOption(string text)
+        private static string HighlightOption(string text)
         {
-            return $"\u001b[42m\u001b[30m{text}\u001b[0m"; // Green background, black text
+            return $"\u001b[42m\u001b[30m{text}\u001b[0m";
         }
 
 

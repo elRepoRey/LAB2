@@ -9,48 +9,46 @@ namespace Lab2.Utils
         Success
     }
 
-    public class Notification
+    public static class Notification
     {
-        private  int _notificationYPosition;
-        private string _message = string.Empty;
+        private static  int NotificationYPosition = 2;
+        private static string Message = string.Empty;
       
 
-        public void Show(string highlightedMessage, string message, NotificationType messageType, int durationMilliseconds = 2000, string position = "top")
+        public static void Show(string highlightedMessage, string message, NotificationType messageType, int durationMilliseconds = 2000, string position = "top")
         {
           switch (position)
             {
             case "center":
-                    _notificationYPosition = (Console.BufferHeight/2)-4;
+                    NotificationYPosition = (Console.BufferHeight/2)-4;
                     break;
                 case "bottom":
-                    _notificationYPosition = Console.WindowHeight - 2;
+                    NotificationYPosition = Console.WindowHeight - 2;
                     break;
                 case "top":
-                    _notificationYPosition = 2;
+                    NotificationYPosition = 2;
                     break;
             }
             Console.ForegroundColor = ConsoleColor.White;
-
-            // Set background color based on message type
+           
             Console.BackgroundColor = messageType == NotificationType.Error ? ConsoleColor.Red : ConsoleColor.Green;
-
-            // Calculate the starting position to center the combined message
+           
             int totalMessageLength = message.Length + " ".Length + highlightedMessage.Length;
             int notificationPositionX = (Console.WindowWidth - totalMessageLength) / 2;
 
             string leftPadding = new string(' ', notificationPositionX);
             string rightPadding = new string(' ', Console.WindowWidth - totalMessageLength - leftPadding.Length);
 
-            Console.SetCursorPosition(0, _notificationYPosition);
+            Console.SetCursorPosition(0, NotificationYPosition);
             Console.Write(leftPadding);
 
-            // Write the highlighted message first
-            Console.ForegroundColor = ConsoleColor.Black;
+           
+            Console.ForegroundColor = NotificationType.Error == messageType ? ConsoleColor.White : ConsoleColor.Black;
             Console.Write(highlightedMessage);
             Console.Write(" ");
 
-            // Reset color and write the rest of the message
-            Console.ForegroundColor = ConsoleColor.White;
+           
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.Write(message);
 
             Console.Write(rightPadding);
@@ -60,16 +58,13 @@ namespace Lab2.Utils
             {
                 if (Console.KeyAvailable)
                 {
-                    Console.ReadKey(intercept: true); // Clear the key from the input buffer
-                    break; // Exit the loop if a key is pressed
+                    Console.ReadKey(intercept: true); 
+                    break;
                 }
-                Thread.Sleep(100); // Check every 100ms
+                Thread.Sleep(50); 
             }
-
-
-
-            // Clear the notification
-            Console.SetCursorPosition(0, _notificationYPosition);
+            
+            Console.SetCursorPosition(0, NotificationYPosition);
             Console.ResetColor();
             Console.Write(new string(' ', Console.WindowWidth));
         }

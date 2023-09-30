@@ -16,10 +16,9 @@ namespace Lab2.Utils
             public GoldCustomer(string name, string password, decimal accumulatedPurchaseAmount) : 
                 base(name, password, accumulatedPurchaseAmount, "Gold")
             {
-                
+                return;
             }
         }
-
         internal class SilverCustomer : Customer
         {
             public override decimal DiscountRate => 0.10M;
@@ -27,7 +26,7 @@ namespace Lab2.Utils
             public SilverCustomer(string name, string password, decimal accumulatedPurchaseAmount) : 
                 base(name, password, accumulatedPurchaseAmount,"Silver")
             {
-                
+                return;
             }
         }
 
@@ -38,11 +37,9 @@ namespace Lab2.Utils
             public BronzeCustomer(string name, string password, decimal accumulatedPurchaseAmount) : 
                 base(name, password, accumulatedPurchaseAmount,"Bronze")
             {
-                
+                return;
             }
         }
-
-        
 
         public static  Customer SetCustomer(string name, string password, decimal accumulatedPurchaseAmount)
         {

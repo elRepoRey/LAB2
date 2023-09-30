@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lab2.Models;
-using Lab2.Interfaces;
+
 using Lab2.Utils;
 
 namespace Lab2.Services
 {
-    internal class CurrencyServices : ICurrencyServices
+    internal static class CurrencyServices
     {
-        private CurrencyType _databaseCurrency { get; set; }
-        public CurrencyType GlobalCurrency { get; set; } 
-        private static readonly Random _random = new Random();
-        public event Action OnCurrencyChanged;
+        public static CurrencyType DatabaseCurrency { get; private set; } = CurrencyType.SEK;
+        public static CurrencyType GlobalCurrency { get; private set; } = CurrencyType.SEK;
+        private static readonly Random random = new Random();
+        public static event Action OnCurrencyChanged = delegate { };
 
-        public CurrencyServices(IStoreConfig storeConfig)
+        static CurrencyServices()
         {
-            _databaseCurrency = storeConfig.DataBaseCurrency;
-            GlobalCurrency = _databaseCurrency;
-
+            DatabaseCurrency = StoreConfig.DataBaseCurrency;
         }
 
         private static readonly Dictionary<CurrencyType, decimal> _baseConversionRates = new Dictionary<CurrencyType, decimal>
@@ -29,21 +27,21 @@ namespace Lab2.Services
             { CurrencyType.JPY, 12.34m }
         };
 
-        public decimal ConvertToGlobalCurrency(decimal amount)
+        public static decimal ConvertToGlobalCurrency(decimal amount)
         {
-            if (_databaseCurrency != CurrencyType.SEK)
+            if (DatabaseCurrency != CurrencyType.SEK)
             {
-                decimal randomAdjustment = (decimal)_random.NextDouble() * 0.02m - 0.01m;
-                _baseConversionRates[_databaseCurrency] += _baseConversionRates[_databaseCurrency] * randomAdjustment;
+                decimal randomAdjustment = (decimal)random.NextDouble() * 0.02m - 0.01m;
+                _baseConversionRates[DatabaseCurrency] += _baseConversionRates[DatabaseCurrency] * randomAdjustment;
             }
 
-            if (_databaseCurrency == GlobalCurrency) return amount;
+            if (DatabaseCurrency == GlobalCurrency) return amount;
 
-            decimal amountInSEK = amount / _baseConversionRates[_databaseCurrency];
+            decimal amountInSEK = amount / _baseConversionRates[DatabaseCurrency];
             return amountInSEK * _baseConversionRates[GlobalCurrency];
         }
 
-        public string GetCurrencySymbol(CurrencyType? currency = null)
+        public static string GetCurrencySymbol(CurrencyType? currency = null)
         {
             currency ??= GlobalCurrency;
 
@@ -55,15 +53,15 @@ namespace Lab2.Services
             throw new ArgumentOutOfRangeException(nameof(currency), "Unknown currency type");
         }
 
-        public decimal ConvertToDatabaseCurrency(decimal amount)
+        public static decimal ConvertToDatabaseCurrency(decimal amount)
         {
-            if (_databaseCurrency == GlobalCurrency) return amount;
+            if (DatabaseCurrency == GlobalCurrency) return amount;
 
             decimal amountInSEK = amount / _baseConversionRates[GlobalCurrency];
-            return amountInSEK * _baseConversionRates[_databaseCurrency];
+            return amountInSEK * _baseConversionRates[DatabaseCurrency];
         }
 
-        public void SetGlobalCurrency(CurrencyType currency)
+        public static void SetGlobalCurrency(CurrencyType currency)
         {
             GlobalCurrency = currency;
             OnCurrencyChanged?.Invoke();

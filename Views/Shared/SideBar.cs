@@ -5,81 +5,66 @@ using System.Linq;
 
 namespace Lab2.Views.Shared
 {
-    internal class Sidebar
-    {
-        private List<string> _categories;
-        private int _selectedCategoryIndex = 0;
-        private const int XPosition = 15;
-        private const int _sidebarStartLine = 4;
-        private int _sidebarEndLine = Console.WindowHeight - 4;
+    internal static class Sidebar
+    {   
+        private static List<string> Categories;
+        private static int SelectedCategoryIndex = 0;
+        private static readonly int XPosition = 15;
+        private static readonly int SidebarStartLine = 4;
+        private static readonly int SidebarEndLine = Console.WindowHeight - 4;
 
-        public Sidebar(ProductService productService)
+        static Sidebar()
         {
-            _categories = productService.GetDistinctCategories().ToList();
+            Categories = ProductService.GetDistinctCategories().ToList();
         }
 
-        public string ItemSelection(ConsoleKey key)
+        public static string Render()
         {
-            switch (key)
-            {
-                case ConsoleKey.UpArrow:
-                    _selectedCategoryIndex = (_selectedCategoryIndex - 1 + _categories.Count) % _categories.Count;
-                    break;
-                case ConsoleKey.DownArrow:
-                    _selectedCategoryIndex = (_selectedCategoryIndex + 1) % _categories.Count;
-                    break;
-                case ConsoleKey.Enter:
-                    return _categories[_selectedCategoryIndex];
-                default:
-                    return null;
-            }
-            return null;
-        }
-
-        public string Render()
-        {
-            ConsoleKey key;
+            string selectedCategory;
 
             do
             {
-                ConsoleDrawing.DrawVerticalLine(XPosition, _sidebarEndLine);
+                ConsoleDrawing.DrawVerticalLine(XPosition, SidebarEndLine);
 
-                // Render all categories
-                for (int i = 0; i < _categories.Count; i++)
+                
+                for (int i = 0; i < Categories.Count; i++)
                 {
-                    Console.SetCursorPosition(1, _sidebarStartLine + 3 * i);
+                    Console.SetCursorPosition(1, SidebarStartLine + 3 * i);
 
-                    if (i == _selectedCategoryIndex)
+                    if (i == SelectedCategoryIndex)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
                     }
 
-                    Console.Write(_categories[i]);
+                    Console.Write(Categories[i]);
                     Console.ResetColor();
                 }
 
-                key = Console.ReadKey().Key;
-              
-                string selected = ItemSelection(key);
                 
-                if (selected != null)
+                switch (Console.ReadKey().Key)
                 {
-                    
-                    return selected;
-                } 
+                    case ConsoleKey.UpArrow:
+                        SelectedCategoryIndex = (SelectedCategoryIndex - 1 + Categories.Count) % Categories.Count;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        SelectedCategoryIndex = (SelectedCategoryIndex + 1) % Categories.Count;
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedCategory = Categories[SelectedCategoryIndex];
+                        return selectedCategory;
+                    case ConsoleKey.Escape:
+                        return null;
+                }
 
-            } while (key != ConsoleKey.Escape);
-
-            // Ensure null is returned as default after the loop
-            return null;
+            } while (true); 
         }
 
         public static class ConsoleDrawing
         {
             public static void DrawVerticalLine(int xPosition, int height)
             {
-                for (int i = _sidebarStartLine; i < height; i++)
+                for (int i = SidebarStartLine; i < height; i++)
                 {
                     Console.SetCursorPosition(xPosition, i);
                     Console.Write("|");

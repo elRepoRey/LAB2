@@ -1,34 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lab2.Interfaces;
+
 using Lab2.Models;
 using Lab2.Utils;
 
 namespace Lab2.Services
 {
-    internal class CustomerServices
+    internal static class CustomerServices
     {
-        private readonly DatabaseService<CustomerDAO> _customerDbService;
-        private List<CustomerDAO> _items;
-        private readonly ICurrencyServices _currencyManager;
+        
+        private static List<CustomerDAO> Customers;
+        
 
-        public CustomerServices(DatabaseService<CustomerDAO> customerDbService, ICurrencyServices currencyManager)
+        static CustomerServices()
         {
-            _customerDbService = customerDbService;
-            _items = _customerDbService.LoadDataFromFiles();
-            _currencyManager = currencyManager;
+            Customers = DatabaseService<CustomerDAO>.LoadDataFromFiles(StoreConfig.FilePaths["Customers"]);
         }
 
-        public (string LoggedInCustomerName, EnumRegisterStatus status) Register(string Name, string Password)
+        public static (string? LoggedInCustomerName, EnumRegisterStatus) Register(string Name, string Password)
         {
-            if (_items.Any(c => c.Name == Name))
+            if (Customers.Any(c => c.Name == Name))
             {
                 return (null, EnumRegisterStatus.UserAlreadyExists);
             }
 
             CustomerDAO customerDao = new CustomerDAO(Name, Password);
-            _items.Add(customerDao);
+            Customers.Add(customerDao);
             try
             {
                 SaveData();
@@ -42,36 +40,36 @@ namespace Lab2.Services
             return (GlobalState.LoggedInCustomer.Name, EnumRegisterStatus.Success);
         }
 
-        public (string LoggedInCustomerName, EnumLoginStatus status) Login(string name, string password)
+        public static EnumLoginStatus  Login(string name, string password)
         {
-            CustomerDAO? customerDao = _items.FirstOrDefault(c => c.Name == name);
+            CustomerDAO? customerDao = Customers.FirstOrDefault(c => c.Name == name);
 
             if (customerDao == null)
             {
-                return (null, EnumLoginStatus.UserDoesNotExist);
+                return EnumLoginStatus.UserDoesNotExist;
             }
             else if (!customerDao.VerifyPassword(password))
             {
-                return (null, EnumLoginStatus.IncorrectPassword);
+                return EnumLoginStatus.IncorrectPassword;
             }
 
             GlobalState.LoggedInCustomer = CustomerFactory.SetCustomer(customerDao.Name, customerDao.Password, customerDao.AccumulatedPurchaseAmount);
-            return (GlobalState.LoggedInCustomer.Name, EnumLoginStatus.Success);
+            return EnumLoginStatus.Success;
         }
 
      
-        public bool Checkout()
+        public static bool Checkout()
         {
             string customerName = GlobalState.LoggedInCustomer?.Name ?? throw new Exception("No customer is logged in.");
 
-            CustomerDAO? customerDao = _items.FirstOrDefault(c => c.Name == customerName);
+            CustomerDAO? customerDao = Customers.FirstOrDefault(c => c.Name == customerName);
 
             if (customerDao == null)
             {
                 throw new CustomerNotFoundException($"Customer with the name {customerName} was not found.");
             }
             
-            customerDao.AccumulatedPurchaseAmount += _currencyManager.ConvertToDatabaseCurrency(GlobalState.LoggedInCustomer.Cart.TotalPrice);
+            customerDao.AccumulatedPurchaseAmount += CurrencyServices.ConvertToDatabaseCurrency(GlobalState.LoggedInCustomer.Cart.TotalPrice);
             GlobalState.LoggedInCustomer = CustomerFactory.SetCustomer(customerDao.Name, customerDao.Password, customerDao.AccumulatedPurchaseAmount);
             try
             {
@@ -85,9 +83,9 @@ namespace Lab2.Services
             return true;
         }
 
-        private void SaveData()
+        private static void SaveData()
         {
-            _customerDbService.SaveDataToFiles(_items);
+            DatabaseService<CustomerDAO>.SaveDataToFiles(Customers, StoreConfig.FilePaths["Customers"]);
         }
 
         public class CustomerNotFoundException : Exception

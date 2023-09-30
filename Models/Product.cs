@@ -1,5 +1,5 @@
 ﻿using Lab2.Models;
-using Lab2.Utils;
+using Lab2.Services;
 
 namespace Lab2.Models;
 public class Product
@@ -15,5 +15,5 @@ public class Product
         Category = category;
     }
 
-    public override string ToString() => $"{Name} - {Price}";
+    public override string ToString() => $"{Name} - {CurrencyServices.ConvertToGlobalCurrency(Price)}";
 }

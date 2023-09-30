@@ -5,8 +5,6 @@ namespace Lab2.Views
 {
     internal static class CustomerView
     {
-
-
         public static void Render()
         {
 
@@ -24,8 +22,5 @@ namespace Lab2.Views
             } while (true);
 
         }
-
-            
-        
     }
 }

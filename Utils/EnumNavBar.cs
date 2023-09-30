@@ -12,8 +12,9 @@ namespace Lab2.Utils
         MyCornerStore,
         Cart,
         Settings,
-        Welcome,
-        Logout 
+        Hi,
+        Logout,
+        ShopAI
     }
 
 }

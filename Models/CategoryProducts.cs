@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Lab2.Models
 {
-    internal class SeedCategoryProducts
+    internal class CategoryProducts
     {
-        public string Category { get; set; }
-        public List<Product> StoreItems { get; set; }
+        public string? Category { get; set; }
+        public List<Product>? Products { get; set; }
     }
 }

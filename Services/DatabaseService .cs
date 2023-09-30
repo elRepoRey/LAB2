@@ -5,40 +5,34 @@ using System.Text.Json;
 
 namespace Lab2.Services
 {
-    internal class DatabaseService<T>
+    internal static class DatabaseService<T>
     {
-        private readonly string _filePath;
-
-        public DatabaseService(string filePath)
-        {
-            _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
-        }
-
-        public void SaveDataToFiles(List<T> data)
+       
+        public static void SaveDataToFiles(List<T> data, string FilePath)
         {
             try
             {
-                lock (_filePath)
+                lock (FilePath)
                 {
-                    File.WriteAllText(_filePath, JsonSerializer.Serialize(data));
+                    File.WriteAllText(FilePath, JsonSerializer.Serialize(data));
                 }
             }
             catch (Exception ex)
             {
-                throw new DataAccessException($"An error occurred while saving data to {_filePath}.", ex);
+                throw new DataAccessException($"An error occurred while saving data to {FilePath}.", ex);
             }
         }
 
-        public List<T> LoadDataFromFiles()
+        public static List<T> LoadDataFromFiles(string FilePath)
         {
             try
             {
-                if (File.Exists(_filePath))
+                if (File.Exists(FilePath))
                 {
                     string fileContent;
-                    lock (_filePath)
+                    lock (FilePath)
                     {
-                        fileContent = File.ReadAllText(_filePath);
+                        fileContent = File.ReadAllText(FilePath);
                     }
                     if (!string.IsNullOrWhiteSpace(fileContent))
                     {
@@ -48,7 +42,7 @@ namespace Lab2.Services
             }
             catch (Exception ex)
             {
-                throw new DataAccessException($"An error occurred while loading data from {_filePath}.", ex);
+                throw new DataAccessException($"An error occurred while loading data from {FilePath}.", ex);
             }
             return new List<T>();
         }

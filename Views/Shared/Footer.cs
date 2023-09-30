@@ -1,30 +1,34 @@
-﻿using Lab2;
-using Lab2.Interfaces;
+﻿using Lab2.Models;
+using Lab2.Utils;
 
 namespace Lab2.Views.Shared
 {
-    internal class Footer
+    internal static class Footer
     {
-        private readonly string _gitHub;
-        private readonly string _linkedIn;
-        private readonly string _footerText;
-        
+        private static readonly string GitHub;
+        private static readonly string LinkedIn;
+        private static readonly string FooterText;
 
-        public Footer(IStoreConfig storeConfig)
+
+        static Footer()
         {
-            _gitHub = storeConfig.GitHubUrl;
-            _linkedIn = storeConfig.LinkedInUrl;
-            _footerText = $"Developed by: {_linkedIn} | {_gitHub}";
+            GitHub = StoreConfig.GitHubUrl;
+            LinkedIn = StoreConfig.LinkedInUrl;
+
+            FooterText = $" {LinkedIn}  |  {GitHub}";
         }
 
-        public void Render()
+        public static void Render()
         {
-            Console.SetCursorPosition(0, Console.WindowHeight - 2);
+            Console.SetCursorPosition(0, Console.WindowHeight-2);
             Console.WriteLine(new string('=', Console.WindowWidth));
 
-            int padding = (Console.WindowWidth - _footerText.Length) / 2;
+            int padding = (Console.WindowWidth - FooterText.Length) / 2;
             Console.SetCursorPosition(padding, Console.WindowHeight - 1);
-            Console.Write(_footerText);
+            
+            Console.Write(FooterText);
+            
         }
+
     }
 }

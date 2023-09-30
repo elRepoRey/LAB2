@@ -2,117 +2,76 @@
 using Lab2.Utils;
 using Lab2.Views.Shared;
 using Lab2.Services;
+using Lab2.ShopAI;
 
 namespace Lab2.Views
 {
     internal class Layout
     {
-        private readonly Navbar _navbar;
-
-        private readonly Footer _footer;
-        private readonly AuthFlow _authFlow;
-        private readonly Settings _settings;
-        private readonly Store _store;
-        private readonly CheckoutCart _checkoutCart;
-
-
-
-        public Layout(Navbar navbar, Footer footer, AuthFlow authFlow, Settings settings, Store store, CheckoutCart checkoutCart)
+        List<string> products = new()
         {
-            _navbar = navbar;
-            _footer = footer;
-            _authFlow = authFlow;
-            _settings = settings;
-            _store = store;
-            _checkoutCart = checkoutCart;
-
-
-        }
-
-        public void Render()
+            "Apple"
+        };
+            
+         public void Render()
         {
             do
             {
                 Console.Clear();
                 if (GlobalState.LoggedInCustomer == null)
                 {
-
-                    _footer.Render();
-                    _navbar.UpdateMenuItems();
-                    _authFlow.Render();
-
-
+                    Footer.Render();                  
+                    AuthFlow.Render();
                 }
-                _navbar.UpdateMenuItems();
-                _footer.Render();
-                DisplayWelcomeMessage();
-                HandleUserInput(Console.ReadKey().Key);
+                else
+                {
+                    
+                    Navbar.UpdateMenuItems();
+                    Footer.Render();
+                    WelcomeMessage.Render();
+
+                    HandleUserInput();
+                }
+               
             }
             while (true);
-
         }
 
-        private void HandleUserInput(ConsoleKey key)
+        private void HandleUserInput()
         {
-            EnumNavBar? selectedAction = _navbar.Logic(key);
-
+            EnumNavBar? selectedAction = Navbar.Logic();
 
             switch (selectedAction)
             {
                 case EnumNavBar.MyCornerStore:
-
-                    DisplayStore();
+                    Body.Clear();
+                    Store.Render();
                     break;
                 case EnumNavBar.Cart:
-                    DisplayCart();
+                    Body.Clear();
+                    CheckoutCart.Render();
                     break;
                 case EnumNavBar.Settings:
-                    DisplaySettings();
+                    Body.Clear();
+                    Settings.Render();
                     break;
                 case EnumNavBar.Logout:
                     HandleLogout();
                     break;
-                case EnumNavBar.Welcome:
-                    DisplayCustomerView();
+                case EnumNavBar.Hi:
+                    CustomerView.Render();
                     break;
+               /* case EnumNavBar.ShopAI:
+                    Body.Clear();
+                    ChatUI.Render();
+                    break;*/
             }
-        }
+        }      
 
-        private void DisplayStore()
-        {
-            Body.Clear();
-            _store.Render();
-        }
-
-        private void DisplayCart()
-        {
-            Body.Clear();
-            _checkoutCart.Render();
-        }
-
-        private void DisplaySettings()
-        {
-            Body.Clear();
-            _settings.DisplayAndChangeCurrency();
-        }
-
-        private void DisplayCustomerView()
-        {
-            CustomerView.Render();
-
-        }
-
-        private void DisplayWelcomeMessage()
-        {
-           WelcomeMessage.Render();
-
-        }
         private void HandleLogout()
         {
             GlobalState.Logout();
             Render();
         }
-
-       
     }
 }

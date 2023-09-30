@@ -2,29 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lab2.Models;
-using Lab2.Interfaces;
+using Lab2.Services;
 
 namespace Lab2.Services
 {
-    internal class ProductService
+    internal static class ProductService
     {
-        private readonly DatabaseService<ProductDAO> _productDbService;
-        private readonly ICurrencyServices _currencyManager;
-        private List<Product> _products;
+        
+        private static List<Product> _products;
 
-        public ProductService(DatabaseService<ProductDAO> productDbService, ICurrencyServices currencyManager)
+        static ProductService()
         {
-            _productDbService = productDbService ?? throw new ArgumentNullException(nameof(productDbService));
-            _currencyManager = currencyManager ?? throw new ArgumentNullException(nameof(currencyManager));
+          
             _products = LoadProducts();
         }
 
-        private List<Product> LoadProducts()
+        private static List<Product> LoadProducts()
         {
             try
             {
-                var productDAOs = _productDbService.LoadDataFromFiles();
-                return productDAOs.Select(p => new Product(p.Name, ConvertToGlobalPrice(p.Price), p.Category)).ToList();
+                var productDAOs = DatabaseService<ProductDAO>.LoadDataFromFiles(StoreConfig.FilePaths["Products"]);
+                return productDAOs.Select(p => new Product(p.Name, ( p.Price), p.Category)).ToList();
             }
             catch (Exception)
             {
@@ -32,17 +30,12 @@ namespace Lab2.Services
             }
         }
 
-        private decimal ConvertToGlobalPrice(decimal priceInDbCurrency)
-        {
-            return _currencyManager.ConvertToGlobalCurrency(priceInDbCurrency);
-        }
-
-        public IEnumerable<Product> GetAllProducts()
+        public static IEnumerable<Product> GetAllProducts()
         {
             return _products;
         }
 
-        public IEnumerable<string> GetDistinctCategories()
+        public static IEnumerable<string> GetDistinctCategories()
         {
             return _products.Select(p => p.Category).Distinct();
         }

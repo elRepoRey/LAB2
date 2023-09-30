@@ -1,0 +1,160 @@
+{
+  "StoreName": "MyCornerStore",
+  "LinkedInUrl": "https://www.linkedin.com/in/silvio-delgado-53745228a/",
+  "GitHubUrl": "https://github.com/elRepoRey/",
+
+  "FilePaths": {
+    "Customers": "CustomerDB.json",
+    "Products": "ProductDB.json"
+  },
+
+
+  "DataBaseCurrencyString": "SEK",
+
+  "CustomersSeed": [
+    {
+      "Name": "Knatte",
+      "Password": "123"
+    },
+    {
+      "Name": "Fnatte",
+      "Password": "321"
+    },
+    {
+      "Name": "Tjatte",
+      "Password": "213"
+    }
+  ],
+
+  "ProductsSeed": [
+    {
+      "Category": "Fruit",
+      "Products": [
+        {
+          "Name": "Apple",
+          "Price": 12.00
+        },
+        {
+          "Name": "Banana",
+          "Price": 15.00
+        },
+        {
+          "Name": "Orange",
+          "Price": 10.00
+        },
+        {
+          "Name": "Grape",
+          "Price": 35.00
+        },
+        {
+          "Name": "Strawberry",
+          "Price": 40.00
+        }
+      ]
+    },
+    {
+      "Category": "Alcohol",
+      "Products": [
+        {
+          "Name": "Beer",
+          "Price": 20.00
+        },
+        {
+          "Name": "Wine",
+          "Price": 100.00
+        },
+        {
+          "Name": "Vodka",
+          "Price": 200.00
+        },
+        {
+          "Name": "Whiskey",
+          "Price": 350.00
+        },
+        {
+          "Name": "Rum",
+          "Price": 250.00
+        }
+      ]
+    },
+    {
+      "Category": "Refreshments",
+      "Products": [
+        {
+          "Name": "Water",
+          "Price": 10.00
+        },
+        {
+          "Name": "Cola",
+          "Price": 15.00
+        },
+        {
+          "Name": "Lemonade",
+          "Price": 20.00
+        },
+        {
+          "Name": "Iced Tea",
+          "Price": 25.00
+        },
+        {
+          "Name": "Juice",
+          "Price": 30.00
+        }
+      ]
+    },
+    {
+      "Category": "Dairy",
+      "Products": [
+        {
+          "Name": "Milk",
+          "Price": 15.00
+        },
+        {
+          "Name": "Cheese",
+          "Price": 80.00
+        },
+        {
+          "Name": "Butter",
+          "Price": 30.00
+        },
+        {
+          "Name": "Yogurt",
+          "Price": 20.00
+        },
+        {
+          "Name": "Ice Cream",
+          "Price": 50.00
+        }
+      ]
+    },
+    {
+      "Category": "Bakery",
+      "Products": [
+        {
+          "Name": "Bread",
+          "Price": 30.00
+        },
+        {
+          "Name": "Croissant",
+          "Price": 15.00
+        },
+        {
+          "Name": "Baguette",
+          "Price": 25.00
+        },
+        {
+          "Name": "Muffin",
+          "Price": 20.00
+        },
+        {
+          "Name": "Cake",
+          "Price": 150.00
+        }
+      ]
+    }
+  ]
+}
+
+
+
+

@@ -1,28 +1,26 @@
-﻿using Lab2.Interfaces;
+﻿
 using Lab2.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using Lab2.Services;
+using Lab2.Views.Shared;
 
 namespace Lab2.Models
 {    public class Cart 
     {
-        private const int MaxDistinctProducts = 8;  // Maximum number of distinct products the cart can hold
-        private readonly Notification _notification = new Notification();       
-
+        private const int MaxDistinctProducts = 8;  
+            
         public List<CartItem> CartItems { get; set; } = new List<CartItem>();
 
         public decimal TotalPrice => CartItems.Sum(ci => ci.TotalPrice);
 
-
-        public event Action? OnCartChanged;
         public int Count => CartItems.Sum(ci => ci.Quantity);
 
         public bool Add(Product product)
         {
             if (CartItems.Count >= MaxDistinctProducts && !CartItems.Any(ci => ci.Product.Name == product.Name))
             {
-                _notification.Show($"{MaxDistinctProducts}", "items is the maximum number of distinct products" +
+                Notification.Show($"{MaxDistinctProducts}", "items is the maximum number of distinct products" +
                     " allowed in the cart.", NotificationType.Error, 4000);
                 return false;
             }
@@ -31,13 +29,13 @@ namespace Lab2.Models
             if (existingCartItem == null)
             {
                 CartItems.Add(new CartItem(product));
-                OnCartChanged?.Invoke();
+                Navbar.UpdateMenuItems();
                 return true;
             }
             else
             {
                 existingCartItem.IncrementQuantity();
-                OnCartChanged?.Invoke();
+                Navbar.UpdateMenuItems();
                 return true;
             }
         }
@@ -50,26 +48,26 @@ namespace Lab2.Models
                 if (existingCartItem.Quantity > 1)
                 {
                     existingCartItem.Quantity--;
+                    Navbar.UpdateMenuItems();
                 }
                 else
                 {
                     CartItems.Remove(existingCartItem);
-                    OnCartChanged?.Invoke();
-                }
-                
+                    Navbar.UpdateMenuItems();
+                }                
             }
         }
 
         public void Clear()
         {
             CartItems.Clear();
-            OnCartChanged?.Invoke();
+            Navbar.UpdateMenuItems();
         }
+
     }
 
     public class CartItem 
     {
-        public event Action? OnCartChanged;
         public Product Product { get; set; }
         public int Quantity { get; set; }
 
@@ -84,8 +82,9 @@ namespace Lab2.Models
         public void IncrementQuantity()
         {
             Quantity++;
-            OnCartChanged?.Invoke();
+            Navbar.UpdateMenuItems();
 
         }
     }
+
 }

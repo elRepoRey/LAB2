@@ -9,6 +9,6 @@
         public Dictionary<string, string> FilePaths { get; set; }
 
         public List<CustomerDAO> CustomersSeed { get; set; } 
-        public List<SeedCategoryProducts> ProductsSeed { get; set; }
+        public List<CategoryProducts> ProductsSeed { get; set; }
     }
 }

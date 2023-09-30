@@ -1,4 +1,4 @@
-﻿using Lab2.Interfaces;
+﻿
 using Lab2.Services;
 using Lab2.Utils;
 using System.Text;
@@ -9,7 +9,7 @@ namespace Lab2.Models
     {
         public string Name { get; private set; }
         private string Password { get; set; }
-        public Cart Cart { get; set; } = new Cart();
+        public Cart Cart { get; set; }
         public string Tier { get;private set; }
         private decimal AccumulatedPurchaseAmount { get ; set; }
         public abstract decimal DiscountRate { get;}
@@ -20,18 +20,13 @@ namespace Lab2.Models
             Password = password;
             AccumulatedPurchaseAmount = accumulatedPurchaseAmount;
             this.Tier = Tier;
-        }
-
-        
-        public void CustomerProfile()
-        {
-            Console.WriteLine($"Name: {Name}\nPassword: {Password}\nTier:" +
-                $" {Tier}\nAccumulated Purchase Amount: {AccumulatedPurchaseAmount}");
+            Cart = new Cart();
         }
 
         public override string ToString()
         {
-            string ConvertedAccumulatedPurchaseAmount = $"{GlobalState.CurrencyManager.ConvertToGlobalCurrency(AccumulatedPurchaseAmount)} {GlobalState.CurrencyManager.GlobalCurrency}";
+            string ConvertedAccumulatedPurchaseAmount = $"{CurrencyServices.ConvertToGlobalCurrency(AccumulatedPurchaseAmount).ToString("F4")} {CurrencyServices.GlobalCurrency}";
+
             StringBuilder sb = new StringBuilder();
 
             string title = "===== Customer Details =====";
@@ -60,7 +55,7 @@ namespace Lab2.Models
             }
             else
             {
-                string totalPrice = $"Total Price: {GlobalState.CurrencyManager.GlobalCurrency} {GlobalState.CurrencyManager.ConvertToGlobalCurrency(Cart.TotalPrice)}";
+                string totalPrice = $"Total Price: {CurrencyServices.GlobalCurrency} {CurrencyServices.ConvertToGlobalCurrency(Cart.TotalPrice)}";
                 sb.AppendLine(totalPrice.PadLeft((Console.WindowWidth + totalPrice.Length) / 2));
             }     
 
